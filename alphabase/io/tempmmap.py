@@ -223,9 +223,14 @@ def create_empty_mmap(
     else:
         temp_file_name = _get_file_location(file_path, overwrite=False)
 
-    with h5py.File(temp_file_name, "w") as hdf_file:
-        array = hdf_file.create_dataset("array", shape=shape, dtype=dtype)
-        array[0] = 0
+    if isinstance(dtype, np.dtypes.ObjectDType):
+        with h5py.File(temp_file_name, "w") as hdf_file:
+            array = hdf_file.create_dataset("array", shape=shape, dtype=dtype)
+            array[0] = np.string_("")
+    else:
+        with h5py.File(temp_file_name, "w") as hdf_file:
+            array = hdf_file.create_dataset("array", shape=shape, dtype=dtype)
+            array[0] = 0
 
     return temp_file_name
 
